@@ -43,6 +43,14 @@ button {
   font-size: 16px;
   cursor: pointer;
 }
+#deleteButton{
+  color: white;
+  background-color: #e90000;
+}
+#addButton{
+  color: white;
+  background-color: rgb(31, 221, 6);
+}
 
 button:hover {
   background-color: #0056b3;
