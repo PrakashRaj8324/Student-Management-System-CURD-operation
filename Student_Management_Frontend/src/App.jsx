@@ -1,35 +1,37 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import TeacherDashboard from './pages/TeacherDashboard';
-import StudentDashboard from './pages/StudentDashboard';
-import './styles.css';
+import axios from 'axios';
 
-// Client-side guard (for UX only). Backend enforces session/role.
-const RequireRole = ({ children, role }) => {
-  const currentRole = localStorage.getItem('role');
-  if (!currentRole) return <Navigate to="/" replace />;
-  if (role && currentRole !== role) return <Navigate to="/" replace />;
-  return children;
-};
+// Set backend base URL
+const api = axios.create({ 
+  baseURL: 'http://localhost:8080', 
+  withCredentials: true   // this allows session cookies
+});
 
+// API functions
+export const loginTeacher = (gmail, password) =>
+  api.post('/auth/login/teacher', { gmail, password }).then(res => res.data);
 
-export default function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/teacher" element={
-          <RequireRole role="TEACHER">
-            <TeacherDashboard />
-          </RequireRole>
-        } />
-        <Route path="/student" element={
-          <RequireRole role="STUDENT">
-            <StudentDashboard />
-          </RequireRole>
-        } />
-      </Routes>
-    </BrowserRouter>
-  );
-}
+export const loginStudent = (gmail) =>
+  api.post('/auth/login/student', { gmail }).then(res => res.data);
+
+export const logout = () =>
+  api.post('/auth/logout').then(res => res.data);
+
+export const getMyDetails = () =>
+  api.get('/students/me').then(res => res.data);
+
+export const getAllStudents = () =>
+  api.get('/students').then(res => res.data);
+
+// Add student (only teacher)
+export const addStudent = (student) =>
+  api.post('/students', student).then(res => res.data);
+
+// Update student
+export const updateStudent = (id, student) =>
+  api.put(`/students/${id}`, student).then(res => res.data);
+
+// Delete student
+export const deleteStudent = (id) =>
+  api.delete(`/students/${id}`).then(res => res.data);
+
+export default api;
