@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: '' });
+// Set backend base URL
+const api = axios.create({ 
+  baseURL: 'http://localhost:8080', 
+  withCredentials: true   // this allows session cookies
+});
 
-// Important: send cookies for session
-api.defaults.withCredentials = true;
-
+// API functions
 export const loginTeacher = (gmail, password) =>
   api.post('/auth/login/teacher', { gmail, password }).then(res => res.data);
 
@@ -20,12 +22,15 @@ export const getMyDetails = () =>
 export const getAllStudents = () =>
   api.get('/students').then(res => res.data);
 
+// Add student (only teacher)
 export const addStudent = (student) =>
   api.post('/students', student).then(res => res.data);
 
+// Update student
 export const updateStudent = (id, student) =>
   api.put(`/students/${id}`, student).then(res => res.data);
 
+// Delete student
 export const deleteStudent = (id) =>
   api.delete(`/students/${id}`).then(res => res.data);
 
